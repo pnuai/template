@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkpnu_slate=self.webpackChunkpnu_slate||[]).push([["823"],{7176(e,s,t){t.r(s),t.d(s,{default:()=>r});var u=t(4848),n=t(6347);function r(){return(0,u.jsx)(n.rd,{to:"/docs/intro"})}}}]);

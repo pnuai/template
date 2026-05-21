@@ -1,0 +1,1734 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>브로슈어 관리 | AI융합교육원</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+<!-- Toast UI Editor -->
+<link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+<script src="https://uicdn.toast.com/editor/latest/i18n/ko-kr.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --blue:#2563eb;--blue-light:#eff6ff;--blue-dark:#1d4ed8;
+    --gray-50:#f9fafb;--gray-100:#f3f4f6;--gray-200:#e5e7eb;
+    --gray-400:#9ca3af;--gray-500:#6b7280;--gray-600:#4b5563;--gray-900:#111827;
+    --green:#16a34a;--green-light:#f0fdf4;--green-border:#bbf7d0;
+    --red:#dc2626;--red-light:#fef2f2;--red-border:#fecaca;
+    --radius:16px;--shadow:0 4px 24px rgba(0,0,0,.07);
+  }
+  body{font-family:'Noto Sans KR',sans-serif;background:var(--gray-100);color:var(--gray-900);min-height:100vh}
+
+  /* NAV */
+  nav{
+    background:rgba(255,255,255,.92);backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--gray-200);
+    padding:0 32px;height:60px;
+    display:flex;align-items:center;justify-content:space-between;
+    position:sticky;top:0;z-index:100;
+  }
+  .nav-left{display:flex;align-items:center;gap:12px}
+  .nav-title{font-weight:800;font-size:1rem}
+  .nav-org{font-size:.78rem;color:var(--gray-400);font-weight:500}
+  .nav-user{display:flex;align-items:center;gap:8px;display:none}
+  .nav-avatar{width:28px;height:28px;border-radius:50%;border:2px solid var(--gray-200)}
+  .nav-username{font-size:.82rem;font-weight:700;color:var(--gray-600)}
+  .nav-member-badge{font-size:.7rem;font-weight:700;color:var(--green);background:var(--green-light);border:1px solid var(--green-border);padding:3px 8px;border-radius:999px}
+
+  /* LAYOUT */
+  .container{max-width:720px;margin:0 auto;padding:48px 24px 100px}
+
+  /* LOGIN SCREEN */
+  #screen-login{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 60px);padding:24px}
+  .login-card{background:white;border-radius:24px;border:1px solid var(--gray-200);padding:48px;box-shadow:var(--shadow);width:100%;max-width:460px}
+  .login-icon{font-size:2.8rem;margin-bottom:20px;text-align:center}
+  .login-title{font-size:1.5rem;font-weight:800;margin-bottom:8px;text-align:center}
+  .login-sub{font-size:.88rem;color:var(--gray-500);line-height:1.7;text-align:center;margin-bottom:32px}
+  .login-info{background:var(--blue-light);border-radius:12px;padding:14px 16px;margin-bottom:24px;font-size:.82rem;color:var(--blue-dark);line-height:1.7}
+  .login-info strong{font-weight:700}
+
+  /* FORM */
+  label{display:block;font-size:.82rem;font-weight:700;color:var(--gray-600);margin-bottom:6px}
+  input{width:100%;padding:11px 14px;border:1.5px solid var(--gray-200);border-radius:10px;font-size:.95rem;font-family:inherit;outline:none;transition:.2s;background:white;color:var(--gray-900)}
+  input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+  .field{margin-bottom:16px}
+  .hint{font-size:.76rem;color:var(--gray-400);margin-top:5px}
+  .hint-link{color:var(--blue);text-decoration:none}
+  .hint-link:hover{text-decoration:underline}
+
+  /* BTN */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 20px;border-radius:10px;font-size:.92rem;font-weight:700;font-family:inherit;border:none;cursor:pointer;transition:all .2s}
+  .btn-full{width:100%}
+  .btn-primary{background:var(--blue);color:white}
+  .btn-primary:hover:not(:disabled){background:var(--blue-dark);transform:translateY(-1px);box-shadow:0 4px 12px rgba(37,99,235,.3)}
+  .btn-primary:disabled{background:var(--gray-400);cursor:not-allowed}
+  .btn-outline{background:white;color:var(--gray-600);border:1.5px solid var(--gray-200)}
+  .btn-outline:hover{border-color:var(--blue);color:var(--blue)}
+  .btn-sm{padding:7px 14px;font-size:.8rem}
+  .btn-danger{background:var(--red-light);color:var(--red);border:1.5px solid var(--red-border)}
+  .btn-danger:hover{background:#fee2e2}
+  .btn-ghost{background:none;border:none;color:var(--gray-400);cursor:pointer;font-size:.82rem;font-family:inherit;padding:4px 8px;border-radius:6px}
+  .btn-ghost:hover{color:var(--gray-900);background:var(--gray-100)}
+
+  /* ERROR */
+  .error-box{background:var(--red-light);border:1px solid var(--red-border);border-radius:10px;padding:12px 16px;font-size:.84rem;color:var(--red);margin-top:12px;display:none;line-height:1.6}
+
+  /* MAIN SCREEN */
+  #screen-main{display:none}
+
+  /* SECTION */
+  .section{background:white;border-radius:var(--radius);border:1px solid var(--gray-200);padding:28px 32px;margin-bottom:16px;box-shadow:var(--shadow)}
+  .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+  .section-title{font-size:.68rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--gray-400)}
+
+  /* DOCS LIST */
+  #docs-list{display:flex;flex-direction:column;gap:8px}
+  .doc-item{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:10px}
+  .doc-icon{font-size:1rem}
+  .doc-name{flex:1;font-size:.88rem;font-weight:600}
+  .doc-sha{font-size:.72rem;color:var(--gray-400);font-family:monospace}
+  .doc-empty{font-size:.85rem;color:var(--gray-400);padding:8px 0}
+
+  /* DROP ZONE */
+  #dropzone{
+    border:2px dashed var(--gray-200);border-radius:var(--radius);
+    padding:44px;text-align:center;cursor:pointer;transition:.2s;background:var(--gray-50);
+  }
+  #dropzone:hover,#dropzone.dragover{border-color:var(--blue);background:var(--blue-light)}
+  #dropzone.has-files{border-color:var(--green);background:var(--green-light)}
+  .drop-icon{font-size:2.4rem;margin-bottom:10px}
+  .drop-label{font-size:.95rem;font-weight:700;color:var(--gray-600);margin-bottom:4px}
+  .drop-hint{font-size:.8rem;color:var(--gray-400)}
+
+  /* FILE CARDS */
+  #file-list{margin-top:16px;display:flex;flex-direction:column;gap:12px}
+  .file-card{background:var(--gray-50);border:1.5px solid var(--gray-200);border-radius:14px;overflow:hidden;transition:.2s}
+  .file-card.ready{border-color:var(--green)}
+  .file-card-header{display:flex;align-items:center;gap:10px;padding:12px 16px;background:white;border-bottom:1px solid var(--gray-200)}
+  .file-card-icon{font-size:1.1rem}
+  .file-card-name{flex:1;font-size:.88rem;font-weight:700;color:var(--gray-900)}
+  .file-card-size{font-size:.74rem;color:var(--gray-400)}
+  .file-card-remove{cursor:pointer;color:var(--gray-400);background:none;border:none;font-size:.9rem;padding:3px 7px;border-radius:6px;line-height:1}
+  .file-card-remove:hover{color:var(--red);background:var(--red-light)}
+  .file-card-body{padding:16px;display:grid;grid-template-columns:1fr 80px;gap:10px 12px}
+  .file-card-body .field{margin:0}
+  .file-card-body label{font-size:.74rem;font-weight:700;color:var(--gray-400);margin-bottom:4px;letter-spacing:.04em;text-transform:uppercase}
+  .file-card-body input,.file-card-body select,.file-card-body textarea{padding:8px 10px;font-size:.85rem}
+  .file-card-body textarea{resize:vertical;min-height:56px;grid-column:1/-1}
+  .field-full{grid-column:1/-1}
+  .theme-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+
+  /* PROGRESS */
+  .progress-wrap{margin-top:16px;display:none}
+  .progress-bar{height:5px;background:var(--gray-200);border-radius:999px;overflow:hidden}
+  .progress-fill{height:100%;background:var(--blue);border-radius:999px;transition:width .3s ease;width:0%}
+  .progress-label{font-size:.76rem;color:var(--gray-400);margin-top:5px;text-align:right}
+
+  /* LOG */
+  #log{background:#0f172a;border-radius:10px;padding:14px 16px;font-family:'Courier New',monospace;font-size:.78rem;color:#94a3b8;min-height:60px;max-height:200px;overflow-y:auto;white-space:pre-wrap;display:none;margin-top:14px}
+  .log-ok{color:#4ade80}.log-err{color:#f87171}.log-info{color:#60a5fa}
+
+  .divider{border:none;border-top:1px solid var(--gray-200);margin:20px 0}
+  .action-row{display:flex;gap:10px;align-items:center}
+  .hidden{display:none!important}
+
+  /* MODAL */
+  .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(15, 23, 42, 0.6);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:200}
+  .modal{background:#f1f5f9;border-radius:24px;width:98%;max-width:1800px;height:96vh;padding:0;box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);position:relative;display:flex;flex-direction:column;overflow:hidden;border:1px solid rgba(255,255,255,0.1)}
+  .modal-header{padding:16px 24px;background:white;border-bottom:1px solid var(--gray-200);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;z-index:10}
+  .modal-close{background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--gray-400);line-height:1;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:8px;transition:0.2s}
+  .modal-close:hover{background:var(--red-light);color:var(--red)}
+  .modal-title{font-size:1rem;font-weight:800;margin:0;display:flex;align-items:center;gap:8px}
+  .modal-title::before{content:'🛠';font-size:1.2rem}
+  
+  /* LIVE STUDIO LAYOUT */
+  .studio-container {
+    flex: 1;
+    display: flex;
+    min-height: 0;
+    background: #f8fafc;
+  }
+  
+  /* LEFT: EDITOR AREA */
+  .studio-editor-pane {
+    width: 38%;
+    min-width: 550px;
+    display: flex;
+    flex-direction: column;
+    background: #f8fafc;
+    border-right: 1px solid var(--gray-200);
+    position: relative;
+  }
+  
+  .editor-property-bar {
+    padding: 20px 24px;
+    background: white;
+    border-bottom: 1px solid var(--gray-200);
+    display: grid;
+    grid-template-columns: 1fr 70px 90px 90px;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+  
+  .editor-content-area {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  /* RIGHT: PREVIEW AREA */
+  .studio-preview-pane {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background: #cbd5e1; /* Slightly darker to make paper pop */
+    overflow: hidden;
+  }
+  
+  .preview-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: transparent;
+  }
+
+  .preview-toolbar {
+    padding: 10px 24px;
+    background: #1e293b; /* Dark toolbar for pro look */
+    color: #94a3b8;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    flex-shrink: 0;
+  }
+
+  /* EDITOR OVERRIDE */
+  #toast-editor{flex:1;min-height:0;margin-bottom:0;border:1px solid var(--gray-200);border-radius:12px;overflow:hidden;box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);background:white}
+  .toastui-editor-defaultUI{border:none !important;height:100% !important}
+  
+  /* [중요] Toast UI 내부의 모든 미리보기 및 모드 전환 요소 제거 */
+  .toastui-editor-main-container .toastui-editor-md-splitter { display: none !important; }
+  .toastui-editor-main-container .toastui-editor-md-preview { display: none !important; }
+  .toastui-editor-main-container .toastui-editor-md-container { width: 100% !important; }
+  .toastui-editor-main-container .toastui-editor-md-editor { width: 100% !important; float: none !important; }
+  
+  /* 하단 모드 전환 탭 (마크다운/위지윅) 숨기기 */
+  .toastui-editor-mode-switch { display: none !important; }
+  
+  /* 상단 탭 (미리보기 탭 등) 숨기기 */
+  .toastui-editor-tabs { display: none !important; }
+  
+  /* INPUT STYLING REFINEMENT */
+  .field label { font-size: 0.7rem; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .field input, .field select { padding: 8px 12px; font-size: 0.85rem; border-radius: 8px; border-color: var(--gray-200); }
+  .field input:focus { border-color: var(--blue); background: white; }
+
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-left">
+    <span class="nav-title">📄 브로슈어 관리</span>
+    <span class="nav-org" id="nav-repo-display">pnuai / pnu-slate</span>
+  </div>
+  <div class="nav-user" id="nav-user">
+    <img class="nav-avatar" id="nav-avatar" src="" alt="">
+    <span class="nav-username" id="nav-username"></span>
+    <span class="nav-member-badge">조직 멤버 ✓</span>
+    <button class="btn-ghost" id="btn-logout">로그아웃</button>
+  </div>
+</nav>
+
+<!-- ──────────── LOGIN SCREEN ──────────── -->
+    <div id="screen-login">
+  <div class="login-card">
+    <div class="login-icon">🔐</div>
+    <div class="login-title">브로슈어 관리 로그인</div>
+    <div class="login-sub">
+      <strong>pnu-ai-center</strong> 조직 멤버만 접근할 수 있습니다.<br>
+      본인의 GitHub Personal Access Token을 입력해주세요.
+    </div>
+
+    <div class="login-info">
+      <strong>어떤 토큰이 필요한가요?</strong><br>
+      GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens<br>
+      권한: <strong>Contents (read/write)</strong>, <strong>Members (read)</strong>
+    </div>
+
+    <div class="field">
+      <label for="input-token">Personal Access Token</label>
+      <input id="input-token" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off" spellcheck="false">
+      <div class="hint">
+        <a class="hint-link" href="https://github.com/settings/tokens/new?scopes=repo,read:org" target="_blank">
+          토큰 발급하러 가기 →
+        </a>
+        &nbsp;(scopes: repo, read:org)
+      </div>
+    </div>
+
+    <button class="btn btn-primary btn-full" id="btn-login">
+      연결 및 멤버 확인
+    </button>
+
+    <div class="error-box" id="login-error"></div>
+  </div>
+</div>
+
+<!-- ──────────── MAIN SCREEN ──────────── -->
+<div id="screen-main">
+  <div class="container">
+
+    <!-- 대상 레포지토리 설정 -->
+    <div class="section" style="padding: 20px 32px;">
+      <div class="section-header" style="margin-bottom:12px">
+        <span class="section-title">대상 레포지토리 (GitHub 소속)</span>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <input type="text" id="input-repo-name" value="pnu-slate" style="flex:1;" placeholder="예: pnu-slate">
+        <button class="btn btn-primary" id="btn-change-repo">변경 적용</button>
+      </div>
+      <div class="hint" style="margin-top:8px">
+        새 브로슈어를 만들려면 GitHub에서 레포지토리를 복제/생성한 뒤 이름을 입력하세요.
+      </div>
+    </div>
+
+    <!-- 현재 파일 목록 -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-title">현재 docs/ 파일 목록</span>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-primary btn-sm" id="btn-create-doc" onclick="openCreateModal()">+ 새 문서 작성</button>
+          <button class="btn btn-outline btn-sm" id="btn-refresh">↻ 새로고침</button>
+        </div>
+      </div>
+      <div id="docs-list"><span class="doc-empty">로딩 중…</span></div>
+    </div>
+
+    <!-- 파일 업로드 -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-title">MD 파일 업로드</span>
+      </div>
+
+      <div id="dropzone">
+        <div class="drop-icon">📂</div>
+        <div class="drop-label">여기에 .md 파일을 드래그하거나 클릭해서 선택</div>
+        <div class="drop-hint">여러 파일 동시 업로드 가능 · .md 파일만 허용</div>
+        <input type="file" id="file-input" accept=".md" multiple style="display:none">
+      </div>
+
+      <div id="file-list"></div>
+
+      <div class="progress-wrap" id="progress-wrap">
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+        <div class="progress-label" id="progress-label">0 / 0</div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="action-row">
+        <button class="btn btn-primary" id="btn-upload" disabled>⬆ 업로드 &amp; 배포</button>
+        <button class="btn btn-outline hidden" id="btn-clear">선택 초기화</button>
+      </div>
+
+      <div id="log"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ──────────── LOCK ALERT MODAL ──────────── -->
+<div class="modal-overlay" id="modal-lock-alert" style="z-index:300">
+  <div class="modal" style="height:auto; max-width:480px; padding:40px; text-align:center; border-radius:32px">
+    <div style="font-size:3.5rem; margin-bottom:24px">🔒</div>
+    <h3 style="font-size:1.4rem; margin-bottom:12px; font-weight:800; color:var(--gray-900)">현재 다른 사용자가 편집 중입니다</h3>
+    <p style="color:var(--gray-500); font-size:0.95rem; line-height:1.6; margin-bottom:32px">
+      <strong id="lock-alert-user" style="color:var(--red); font-weight:700">@username</strong> 님이 이 문서를 편집하고 있습니다.<br>
+      내용 충돌을 방지하기 위해 <strong>읽기 전용</strong>으로 열거나,<br>편집 권한을 <strong>강제로</strong> 가져올 수 있습니다.
+    </p>
+    <div style="display:flex; flex-direction:column; gap:12px">
+      <button class="btn btn-primary btn-full" id="btn-lock-readonly" style="height:48px; font-size:1rem">읽기 전용으로 열기</button>
+      <button class="btn btn-danger btn-full" id="btn-lock-force" style="height:48px; font-size:1rem">강제로 편집 (기존 락 해제)</button>
+      <button class="btn btn-outline btn-full" onclick="closeLockAlert()" style="height:48px; font-size:1rem">취소</button>
+    </div>
+  </div>
+</div>
+
+<!-- ──────────── LIVE STUDIO MODAL ──────────── -->
+<div class="modal-overlay" id="modal-edit">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-filename">라이브 브로슈어 스튜디오</div>
+      <div style="display:flex;gap:12px;align-items:center">
+        <button class="btn btn-outline btn-sm" onclick="closeEditModal()">닫기</button>
+        <button class="btn btn-primary btn-sm" id="btn-save-edit" onclick="saveEdit()">저장 및 배포</button>
+        <button class="modal-close" style="margin-left:8px" onclick="closeEditModal()">×</button>
+      </div>
+    </div>
+
+    <div class="studio-container">
+      <!-- LEFT: EDITOR AREA -->
+      <div class="studio-editor-pane">
+        <div class="editor-property-bar">
+          <div class="field">
+            <label>문서 제목</label>
+            <input type="text" id="edit-title" placeholder="예) AI융합교육원 소개">
+          </div>
+          <div class="field">
+            <label>순서</label>
+            <input type="number" id="edit-pos" placeholder="1">
+          </div>
+          <div class="field">
+            <label>문서 ID</label>
+            <input type="text" id="edit-id" placeholder="intro">
+          </div>
+          <div class="field">
+            <label>테마 색상</label>
+            <select id="edit-theme"></select>
+          </div>
+        </div>
+        
+        <div class="editor-content-area">
+          <div id="toast-editor"></div>
+        </div>
+      </div>
+
+      <!-- RIGHT: PREVIEW AREA -->
+      <div class="studio-preview-pane">
+        <div class="preview-toolbar">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#10b981;box-shadow:0 0 12px rgba(16,185,129,0.6)"></span>
+            <span style="color:white;font-weight:700">LIVE RENDERER</span>
+            <span style="opacity:0.6;margin-left:6px">A4 브로슈어 규격 실시간 동기화</span>
+          </div>
+          <div style="display:flex;gap:12px">
+            <button class="btn-ghost" style="color:#cbd5e1" onclick="refreshPreview()">↻ 새로고침</button>
+            <button class="btn-ghost" style="color:#cbd5e1" onclick="printPreview()">🖨 인쇄 테스트</button>
+          </div>
+        </div>
+        <iframe src="../preview" class="preview-iframe" id="preview-frame"></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ─── 고정 상수 및 동적 변수 ─── */
+/* ─── 고정 상수 및 동적 변수 ─── */
+const ORG = window.location.hostname.includes('github.io') 
+  ? window.location.hostname.split('.')[0] 
+  : (localStorage.getItem('pnu_admin_org') || 'pnuai');
+let REPO = localStorage.getItem('pnu_admin_repo') || 'pnu-slate';
+const BRANCH = 'main';
+
+/* ─── 상태 ─── */
+let TOKEN = '';
+let ME = null;
+let selectedFiles = [];
+
+const getCurUser = () => (ME ? ME.login : 'unknown');
+
+/* ─── Lock System ─── */
+const LOCK_DIR = '.locks';
+const HEARTBEAT_INTERVAL_MS = 300000; // 5min
+const STALE_THRESHOLD_MS = 900000;    // 15min
+let heartbeatTimer = null;
+let currentLock = null; // { docId, sha }
+let isReadOnly = false;
+
+/* ─── API helper ─── */
+const ghFetch = (path, { headers: extraHeaders = {}, ...restOpts } = {}) =>
+  fetch(`https://api.github.com${path}`, {
+    headers: {
+      Authorization: `Bearer ${TOKEN}`,
+      Accept: 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28',
+      ...extraHeaders,
+    },
+    ...restOpts,
+  });
+
+/* ─── 로그인 ─── */
+const btnLogin   = document.getElementById('btn-login');
+const loginError = document.getElementById('login-error');
+
+btnLogin.addEventListener('click', () => doLogin());
+document.getElementById('input-token').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+
+async function doLogin(savedToken = null) {
+  const raw = savedToken ?? document.getElementById('input-token').value.trim();
+  if (!raw) { showError('토큰을 입력해주세요.'); return; }
+
+  TOKEN = raw;
+  btnLogin.disabled = true;
+  btnLogin.innerHTML = '<span class="spinner"></span> 확인 중…';
+  loginError.style.display = 'none';
+
+  try {
+    /* 1) 본인 계정 정보 */
+    const userRes = await ghFetch('/user');
+    if (!userRes.ok) throw new Error(`GitHub 인증 실패 (${userRes.status}) — 토큰을 확인해주세요.`);
+    ME = await userRes.json();
+
+    /* 2) 조직 멤버 여부 확인 */
+    const memberRes = await ghFetch(`/orgs/${ORG}/members/${ME.login}`);
+    if (memberRes.status === 302 || memberRes.status === 204) {
+      /* 204 = 멤버, 302 = 공개 멤버 리다이렉트 (둘 다 OK) */
+    } else if (memberRes.status === 404) {
+      throw new Error(`@${ME.login} 계정은 ${ORG} 조직의 멤버가 아닙니다.\n조직 관리자에게 초대를 요청하세요.`);
+    } else {
+      /* 403 = 토큰에 read:org 권한 없음 */
+      throw new Error(`조직 멤버 확인 권한이 없습니다 (${memberRes.status}).\n토큰에 read:org 권한을 추가해주세요.`);
+    }
+
+    /* 3) 성공 → 토큰 저장 후 메인 화면 */
+    localStorage.setItem('pnu_admin_token', raw);
+    enterMain();
+
+  } catch (e) {
+    TOKEN = '';
+    /* 저장된 토큰이 만료됐을 경우 삭제 */
+    if (savedToken) localStorage.removeItem('pnu_admin_token');
+    showError(e.message);
+  } finally {
+    btnLogin.disabled = false;
+    btnLogin.innerHTML = '연결 및 멤버 확인';
+  }
+}
+
+/* ─── 페이지 로드 시 자동 로그인 ─── */
+(async () => {
+  const saved = localStorage.getItem('pnu_admin_token');
+  if (saved) {
+    document.getElementById('input-token').value = saved;
+    await doLogin(saved);
+  }
+})();
+
+function showError(msg) {
+  loginError.textContent = msg;
+  loginError.style.display = 'block';
+}
+
+function enterMain() {
+  document.getElementById('screen-login').style.display = 'none';
+  document.getElementById('screen-main').style.display  = 'block';
+
+  /* 네비에 사용자 표시 */
+  const navUser = document.getElementById('nav-user');
+  navUser.style.display = 'flex';
+  document.getElementById('nav-avatar').src = ME.avatar_url;
+  document.getElementById('nav-username').textContent = '@' + getCurUser();
+
+  updateRepoUI();
+}
+
+function updateRepoUI() {
+  document.getElementById('nav-repo-display').textContent = `${ORG} / ${REPO}`;
+  document.getElementById('input-repo-name').value = REPO;
+  loadDocs();
+}
+
+document.getElementById('btn-change-repo').addEventListener('click', () => {
+  const newRepo = document.getElementById('input-repo-name').value.trim();
+  if (!newRepo) { alert('레포지토리 이름을 입력해주세요.'); return; }
+  REPO = newRepo;
+  localStorage.setItem('pnu_admin_repo', REPO);
+  updateRepoUI();
+});
+
+/* ─── 로그아웃 ─── */
+document.getElementById('btn-logout').addEventListener('click', () => {
+  TOKEN = ''; ME = null; selectedFiles = [];
+  localStorage.removeItem('pnu_admin_token');
+  document.getElementById('input-token').value = '';
+  document.getElementById('screen-main').style.display = 'none';
+  document.getElementById('screen-login').style.display = 'flex';
+  document.getElementById('nav-user').style.display = 'none';
+  document.getElementById('log').style.display = 'none';
+  document.getElementById('log').innerHTML = '';
+});
+
+/* ─── 파일 목록 ─── */
+async function loadDocs() {
+  const el = document.getElementById('docs-list');
+  el.innerHTML = '<span class="doc-empty">로딩 중…</span>';
+  try {
+    // 1. Git Trees API를 통해 브랜치의 절대 최신 파일 트리구조 실시간 조회 (완벽 캐시 우회)
+    const treeRes = await ghFetch(`/repos/${ORG}/${REPO}/git/trees/${BRANCH}?recursive=1`);
+    if (!treeRes.ok) throw new Error('Git Tree API 호출 실패: ' + treeRes.status);
+    const treeData = await treeRes.json();
+    
+    // docs/ 폴더 아래의 .md 파일들 필터링 및 매핑
+    const mds = treeData.tree
+      .filter(item => item.path.startsWith('docs/') && item.path.endsWith('.md'))
+      .map(item => ({
+        name: item.path.substring('docs/'.length),
+        path: item.path,
+        sha: item.sha,
+        size: item.size
+      }));
+    
+    if (!mds.length) { el.innerHTML = '<span class="doc-empty">docs/ 폴더에 .md 파일이 없습니다.</span>'; return; }
+    
+    // 2. 각 파일의 고유 blob SHA를 통해 원본 파일 내용을 100% 무결하게 실시간 병렬 로드
+    const docsData = await Promise.all(mds.map(async f => {
+      try {
+        const blobRes = await ghFetch(`/repos/${ORG}/${REPO}/git/blobs/${f.sha}`);
+        if (!blobRes.ok) return { ...f, sidebar_position: 999, content: '', rawData: f };
+        const blobData = await blobRes.json();
+        
+        // Base64 디코딩 (UTF-8 완벽 지원)
+        const text = decodeURIComponent(escape(atob(blobData.content)));
+        
+        // 프론트매터의 sidebar_position 파싱
+        const match = text.match(/sidebar_position:\s*(\d+)/);
+        const pos = match ? parseInt(match[1], 10) : 999;
+        return { ...f, sidebar_position: pos, content: text, rawData: f };
+      } catch (err) {
+        console.warn(`Blob 로드 실패 (${f.name}):`, err);
+        return { ...f, sidebar_position: 999, content: '', rawData: f };
+      }
+    }));
+    
+    // sidebar_position 기준으로 오름차순 정렬 (유저님이 수정한 '순서' 값 완벽 동기화)
+    docsData.sort((a, b) => a.sidebar_position - b.sidebar_position);
+    window.currentDocsList = docsData; // 순서 조정을 위해 글로벌 캐싱
+    
+    el.innerHTML = docsData.map((f, index) => {
+      const isFirst = index === 0;
+      const isLast = index === docsData.length - 1;
+      
+      const upButton = isFirst 
+        ? `<button class="btn btn-outline btn-sm" disabled style="opacity: 0.3; cursor: not-allowed; padding: 2px 8px; font-size: 11px;">▲</button>`
+        : `<button class="btn btn-outline btn-sm" onclick="swapFilesByIndex(${index}, ${index - 1})" style="padding: 2px 8px; font-size: 11px; color: var(--blue); font-weight: bold; border-color: var(--blue);">▲</button>`;
+        
+      const downButton = isLast
+        ? `<button class="btn btn-outline btn-sm" disabled style="opacity: 0.3; cursor: not-allowed; padding: 2px 8px; font-size: 11px;">▼</button>`
+        : `<button class="btn btn-outline btn-sm" onclick="swapFilesByIndex(${index}, ${index + 1})" style="padding: 2px 8px; font-size: 11px; color: var(--blue); font-weight: bold; border-color: var(--blue);">▼</button>`;
+      
+      const displayPos = f.sidebar_position === 999 ? '미지정' : f.sidebar_position;
+      
+      return `
+      <div class="doc-item" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: white; border-radius: 8px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid var(--border);">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span class="doc-icon" style="font-size: 16px;">📄</span>
+          <span class="doc-name" style="font-weight: 600; color: var(--navy); font-size: 13px;">${f.name}</span>
+          <span class="doc-sha" style="font-size: 11px; color: var(--blue); background: var(--light); padding: 2px 6px; border-radius: 4px; font-family: monospace;">${f.sha.slice(0,7)}</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <span style="font-size: 12px; color: var(--gray); font-weight: 500; margin-right: 4px;">순서 (${displayPos}):</span>
+          ${upButton}
+          ${downButton}
+          <div style="width: 1px; height: 16px; background: var(--border); margin: 0 6px;"></div>
+          <button class="btn btn-outline btn-sm" onclick="openEditModal('${f.name}','${f.sha}')">수정</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteFile('${f.name}','${f.sha}')">삭제</button>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    if (e.message.includes('404')) {
+      el.innerHTML = `<span style="color:var(--gray-500);font-size:.85rem">⚠️ 레포지토리가 존재하지 않거나, 아직 파일이 하나도 없습니다.<br>GitHub에서 템플릿으로 레포지토리를 생성한 후 시도해주세요.</span>`;
+    } else {
+      el.innerHTML = `<span style="color:var(--red);font-size:.85rem">불러오기 실패: ${e.message}</span>`;
+    }
+  }
+}
+
+document.getElementById('btn-refresh').addEventListener('click', loadDocs);
+
+/* ─── 삭제 ─── */
+window.deleteFile = async (name, sha) => {
+  if (!confirm(`"${name}" 파일을 삭제하시겠습니까?\n삭제 후 사이트가 자동 재배포됩니다.`)) return;
+  appendLog(`🗑 ${name} 삭제 중…`);
+  try {
+    const r = await ghFetch(`/repos/${ORG}/${REPO}/contents/docs/${name}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        message: `docs(delete): remove ${name} by @${getCurUser()}`, 
+        sha, 
+        branch: BRANCH 
+      }),
+    });
+    if (!r.ok) { const d = await r.json(); throw new Error(d.message); }
+    appendLog(`✓ ${name} 삭제 완료`, 'ok');
+    appendLog('🚀 GitHub Actions 배포 시작됨…', 'ok');
+    setTimeout(loadDocs, 1500);
+  } catch(e) {
+    appendLog(`✗ 실패: ${e.message}`, 'err');
+  }
+};
+
+/* ─── 순서 교환 GUI 엔진 (GitHub 파일 쌍 정밀 스왑) ─── */
+window.swapFilesByIndex = async (idx1, idx2) => {
+  if (!window.currentDocsList || !window.currentDocsList[idx1] || !window.currentDocsList[idx2]) return;
+  const file1 = window.currentDocsList[idx1];
+  const file2 = window.currentDocsList[idx2];
+  await swapFiles(file1, file2);
+};
+
+async function swapFiles(file1, file2) {
+  appendLog(`🔄 "${file1.name}"와 "${file2.name}"의 순서 바꾸는 중…`);
+  const el = document.getElementById('docs-list');
+  el.innerHTML = `<span class="doc-empty" style="color: var(--blue); font-weight: bold;">🔄 문서 순서를 스왑하는 중입니다 (GitHub 동기화)…</span>`;
+  
+  try {
+    // 1. 실시간으로 브랜치의 절대 최신 파일 트리를 다시 조회하여, 최신 SHA 2차 검증 확보 (캐시 0% 우회)
+    const treeRes = await ghFetch(`/repos/${ORG}/${REPO}/git/trees/${BRANCH}?recursive=1`);
+    if (!treeRes.ok) throw new Error('최신 Git Tree 조회 실패');
+    const treeData = await treeRes.json();
+    
+    const fresh1 = treeData.tree.find(item => item.path === `docs/${file1.name}`);
+    const fresh2 = treeData.tree.find(item => item.path === `docs/${file2.name}`);
+    
+    if (!fresh1 || !fresh2) throw new Error('지정한 문서가 GitHub 상에 존재하지 않습니다.');
+    
+    // 2. 100% 캐시 우회되는 최신 Blob API를 호출하여 파일 내용 확보
+    const [blobRes1, blobRes2] = await Promise.all([
+      ghFetch(`/repos/${ORG}/${REPO}/git/blobs/${fresh1.sha}`),
+      ghFetch(`/repos/${ORG}/${REPO}/git/blobs/${fresh2.sha}`)
+    ]);
+    
+    if (!blobRes1.ok || !blobRes2.ok) throw new Error('파일 최신 내용 로드 실패');
+    
+    const [blob1, blob2] = await Promise.all([blobRes1.json(), blobRes2.json()]);
+    
+    let text1 = decodeURIComponent(escape(atob(blob1.content)));
+    let text2 = decodeURIComponent(escape(atob(blob2.content)));
+    
+    // 프론트매터의 sidebar_position 파싱
+    const match1 = text1.match(/sidebar_position:\s*(\d+)/);
+    const match2 = text2.match(/sidebar_position:\s*(\d+)/);
+    
+    let pos1 = match1 ? parseInt(match1[1], 10) : 999;
+    let pos2 = match2 ? parseInt(match2[1], 10) : 999;
+    
+    // 만약 둘 다 순서가 미지정이거나 같다면 기본 정렬 인덱스를 부여
+    if (pos1 === pos2 || pos1 === 999 || pos2 === 999) {
+      const idx1 = window.currentDocsList.findIndex(f => f.name === file1.name);
+      const idx2 = window.currentDocsList.findIndex(f => f.name === file2.name);
+      pos1 = idx1 + 1;
+      pos2 = idx2 + 1;
+    }
+    
+    // 내용 속 sidebar_position 값 맞바꾸기 (앞으로 누락 및 프론트매터 없음 모두 철통 방어)
+    if (text1.match(/sidebar_position:/)) {
+      text1 = text1.replace(/(sidebar_position:\s*)(\d+)/, `$1${pos2}`);
+    } else if (text1.match(/^---\s*([\s\S]*?)---/)) {
+      text1 = text1.replace(/^---\s*\n/, `---\nsidebar_position: ${pos2}\n`);
+    } else {
+      text1 = `---\nsidebar_position: ${pos2}\n---\n\n` + text1;
+    }
+    
+    if (text2.match(/sidebar_position:/)) {
+      text2 = text2.replace(/(sidebar_position:\s*)(\d+)/, `$1${pos1}`);
+    } else if (text2.match(/^---\s*([\s\S]*?)---/)) {
+      text2 = text2.replace(/^---\s*\n/, `---\nsidebar_position: ${pos1}\n`);
+    } else {
+      text2 = `---\nsidebar_position: ${pos1}\n---\n\n` + text2;
+    }
+    
+    const finalContent1 = btoa(unescape(encodeURIComponent(text1)));
+    const finalContent2 = btoa(unescape(encodeURIComponent(text2)));
+    
+    appendLog(`  - 첫 번째 파일 순서 적용 중…`);
+    const putRes1 = await ghFetch(`/repos/${ORG}/${REPO}/contents/docs/${file1.name}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: `chore(docs): swap order position of ${file1.name} to ${pos2} by @${getCurUser()}`,
+        content: finalContent1,
+        sha: fresh1.sha,
+        branch: BRANCH
+      })
+    });
+    
+    if (!putRes1.ok) {
+      const errData = await putRes1.json().catch(() => ({ message: '응답 분석 실패' }));
+      throw new Error(`[${file1.name}] 커밋 실패: ${errData.message}`);
+    }
+    
+    appendLog(`  - 두 번째 파일 순서 적용 중…`);
+    const putRes2 = await ghFetch(`/repos/${ORG}/${REPO}/contents/docs/${file2.name}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: `chore(docs): swap order position of ${file2.name} to ${pos1} by @${getCurUser()}`,
+        content: finalContent2,
+        sha: fresh2.sha,
+        branch: BRANCH
+      })
+    });
+    
+    if (!putRes2.ok) {
+      const errData = await putRes2.json().catch(() => ({ message: '응답 분석 실패' }));
+      throw new Error(`[${file2.name}] 커밋 실패: ${errData.message}`);
+    }
+    
+    appendLog(`✓ "${file1.name}"와 "${file2.name}"의 순서 교환이 완벽 완료되었습니다!`, 'ok');
+    showStudioToast('문서 순서가 완벽히 스왑되었습니다! ↕️✨', 'success');
+    
+    loadDocs();
+  } catch (err) {
+    appendLog(`✗ 순서 변경 실패: ${err.message}`, 'err');
+    showStudioToast(`순서 변경 실패: ${err.message}`, 'error');
+    loadDocs();
+  }
+}
+
+/* ─── 에디터 초기화 ─── */
+let toastEditor = null;
+let previewReady = false;
+let isSyncingLeft = false;
+let isSyncingRight = false;
+let editorScrollTimeout = null;
+
+// 스크롤 동기화 수동 비활성화 (사용자 피드백 반영: 클릭 및 캐럿 포커스 기반 동기화만 남김)
+function handleEditorScroll(scrollTarget) {
+  // no-op
+}
+
+// 스크롤 위치와 커서 상태를 그대로 지키면서 마크다운 내용을 안전하게 갱신하는 헬퍼 (초정밀 포커스 무장)
+function setMarkdownPreservingScroll(markdown) {
+  if (!toastEditor) return;
+  
+  const scrollContainer = document.querySelector('#toast-editor .toastui-editor-scroll-behavior') || document.querySelector('#toast-editor .cm-scroller');
+  const currentScrollTop = scrollContainer ? scrollContainer.scrollTop : 0;
+  
+  let selection = null;
+  try {
+    selection = toastEditor.getSelection();
+  } catch (e) {
+    console.log("%c[EDITOR] getSelection skipped (editor is currently unfocused)", "color: #9ca3af; font-style: italic;");
+  }
+  
+  toastEditor.setMarkdown(markdown);
+  
+  setTimeout(() => {
+    if (selection && selection[0]) {
+      try {
+        toastEditor.setSelection(selection[0], selection[1]);
+      } catch (e) {
+        // 포커스 복원 실패 시 예외를 조용히 묻어 본문 유실 및 오동작 원천 차단
+      }
+    }
+    if (scrollContainer) {
+      scrollContainer.scrollTop = currentScrollTop;
+    }
+  }, 30);
+}
+
+// 스튜디오 내 실시간 피드백 토스트 알림 메시지 (디버그 & 초프리미엄 UX 가미)
+function showStudioToast(message, type = 'success') {
+  const container = document.getElementById('studio-toast-container') || (() => {
+    const c = document.createElement('div');
+    c.id = 'studio-toast-container';
+    c.style.cssText = `
+      position: fixed;
+      bottom: 24px;
+      left: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 99999;
+      pointer-events: none;
+      font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+    `;
+    document.body.appendChild(c);
+    return c;
+  })();
+
+  const toast = document.createElement('div');
+  toast.style.cssText = `
+    padding: 14px 20px;
+    background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+    color: white;
+    font-weight: 600;
+    font-size: 13px;
+    border-radius: 8px;
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    pointer-events: auto;
+  `;
+  toast.innerHTML = `
+    <span style="font-size: 16px;">${type === 'success' ? '✓' : type === 'error' ? '✗' : 'ℹ'}</span>
+    <span>${message}</span>
+  `;
+  container.appendChild(toast);
+
+  // Trigger animation
+  requestAnimationFrame(() => {
+    toast.style.transform = 'translateY(0)';
+    toast.style.opacity = '1';
+  });
+
+  // Remove after 3s
+  setTimeout(() => {
+    toast.style.transform = 'translateY(-20px)';
+    toast.style.opacity = '0';
+    setTimeout(() => {
+      toast.remove();
+    }, 300);
+  }, 3000);
+}
+
+function initEditor() {
+  if (toastEditor) return;
+  console.log("%c[EDITOR] Initializing Toast UI Editor...", "color: #3b82f6; font-weight: bold;");
+
+  toastEditor = new toastui.Editor({
+    el: document.querySelector('#toast-editor'),
+    height: '100%',
+    initialEditType: 'markdown',
+    previewStyle: 'tab',
+    language: 'ko-KR',
+    usageStatistics: false,
+    toolbarItems: [
+      ['heading', 'bold', 'italic', 'strike'],
+      ['hr', 'quote'],
+      ['ul', 'ol', 'task', 'indent', 'outdent'],
+      ['table', 'image', 'link'],
+      ['code', 'codeblock']
+    ],
+    events: {
+      change: () => {
+        syncToPreview();
+      }
+    }
+  });
+
+  // [Scroll Sync & Caret Highlight] 캡처링 이벤트 위임 방식을 통해 타이밍 이슈를 원천 차단
+  const editorEl = document.querySelector('#toast-editor');
+  if (editorEl) {
+    // 캡처링 스크롤 리스너로 내부 스크롤을 무조건 감지 (툴바 등을 제외한 모든 실제 스크롤 타겟 감지)
+    editorEl.addEventListener('scroll', (e) => {
+      if (!e.target.closest('.toastui-editor-toolbar')) {
+        handleEditorScroll(e.target);
+      }
+    }, true); // Capture phase!
+    console.log("%c[EDITOR] Scroll capturing-phase listener registered successfully.", "color: #10b981;");
+
+    // 커서 이동 시 HIGHLIGHT_LINE 전송 위임 바인딩
+    const trackCaret = () => {
+      if (!toastEditor || !previewReady) return;
+      const selection = toastEditor.getSelection();
+      if (selection && selection[0]) {
+        const activeLine = selection[0][0]; // 1-indexed row
+        const frame = document.getElementById('preview-frame');
+        if (frame && frame.contentWindow) {
+          console.log(`%c[EDITOR] Caret moved -> posting HIGHLIGHT_LINE: ${activeLine}`, "color: #a855f7;");
+          frame.contentWindow.postMessage({
+            type: 'HIGHLIGHT_LINE',
+            line: activeLine
+          }, '*');
+        }
+      }
+    };
+    
+    editorEl.addEventListener('keyup', trackCaret);
+    editorEl.addEventListener('mouseup', trackCaret);
+    editorEl.addEventListener('click', trackCaret);
+    toastEditor.on('change', trackCaret);
+    console.log("%c[EDITOR] Caret tracking listeners registered successfully.", "color: #10b981;");
+  }
+
+  // 테마 선택 값 변경 시 즉시 라이브 프리뷰 업데이트 동기화
+  const th = document.getElementById('edit-theme');
+  if (th) {
+    th.addEventListener('change', () => {
+      syncToPreview();
+    });
+  }
+}
+
+/* ─── 라이브 프리뷰 동기화 ─── */
+function syncToPreview() {
+  if (!toastEditor) return;
+  if (!previewReady) {
+    console.log("%c[EDITOR] Sync blocked: Preview iframe not ready yet.", "color: #ef4444; font-style: italic;");
+    return;
+  }
+  
+  const content = toastEditor.getMarkdown();
+  const theme = document.getElementById('edit-theme')?.value || 'blue';
+  const layout = localStorage.getItem("brochure-layout") || 'standard';
+  const frame = document.getElementById('preview-frame');
+  if (frame && frame.contentWindow) {
+    console.log("%c[EDITOR] Dispatching MDX_UPDATE to preview. Length: " + content.length, "color: #3b82f6;");
+    frame.contentWindow.postMessage({
+      type: 'MDX_UPDATE',
+      content: content,
+      theme: theme,
+      layout: layout
+    }, '*');
+  }
+}
+
+window.refreshPreview = () => {
+  const frame = document.getElementById('preview-frame');
+  if (frame) {
+    previewReady = false; // 새로고침 시 플래그 락 잠금
+    console.log("%c[EDITOR] Refreshing preview frame. Resetting previewReady to false.", "color: #ef4444; font-weight: bold;");
+    frame.src = frame.src; // Reload
+  }
+};
+
+window.printPreview = () => {
+  const frame = document.getElementById('preview-frame');
+  if (frame && frame.contentWindow) {
+    frame.contentWindow.print();
+  }
+};
+
+// 프리뷰 아이프레임 통신 수신 통합 라우터
+window.addEventListener('message', (event) => {
+  if (!event.data || typeof event.data !== 'object') return;
+
+  // [1] 프리뷰 로딩 완료 시 데이터 초기화 및 싱크 개방
+  if (event.data.type === 'PREVIEW_READY') {
+    previewReady = true;
+    console.log("%c[EDITOR RECEIVER] PREVIEW_READY received! Activating message bridge.", "color: #10b981; font-weight: bold;");
+    syncToPreview();
+  } 
+  // [2] 프리뷰 요소 클릭 시 소스 에디터 라인 점프, 포커스 및 해당 줄로 스무스 스크롤 (Click-to-Focus)
+  else if (event.data.type === 'JUMP_TO_LINE') {
+    const line = event.data.line;
+    console.log(`%c[EDITOR RECEIVER] JUMP_TO_LINE received for line: ${line}`, "color: #eab308; font-weight: bold;");
+    if (toastEditor) {
+      toastEditor.focus();
+      toastEditor.setSelection([line, 1], [line, 1]);
+      
+      // 일관성 있게 수정할 라인을 항상 화면 정중앙(Center)에 배치하는 초정밀 뷰포트 정렬 엔진
+      setTimeout(() => {
+        const lineElements = document.querySelectorAll('#toast-editor .cm-line');
+        const scrollContainer = document.querySelector('#toast-editor .toastui-editor-scroll-behavior') || document.querySelector('#toast-editor .cm-scroller');
+        if (scrollContainer && lineElements && lineElements[line - 1]) {
+          const lineEl = lineElements[line - 1];
+          const containerHeight = scrollContainer.clientHeight;
+          const elemTop = lineEl.offsetTop;
+          const elemHeight = lineEl.offsetHeight;
+          
+          // 정중앙 배치 공식: 요소 시작점 - (컨테이너 높이 / 2) + (요소 높이 / 2)
+          const targetScrollTop = elemTop - (containerHeight / 2) + (elemHeight / 2);
+          
+          scrollContainer.scrollTo({
+            top: Math.max(0, targetScrollTop),
+            behavior: 'smooth'
+          });
+        }
+      }, 50);
+    }
+  }
+  // [3] 더블클릭 텍스트 직접 수정 발생 시 안전한 본문 라인 치환 엔진 (Prefix & HTML Wrapper 보존, 스크롤 유지)
+  else if (event.data.type === 'INLINE_TEXT_UPDATE') {
+    const line = event.data.line;
+    const cleanOriginal = event.data.cleanOriginal;
+    const newText = event.data.newText;
+    console.log(`%c[EDITOR RECEIVER] INLINE_TEXT_UPDATE received for line ${line}: "${newText}" (original: "${cleanOriginal}")`, "color: #3b82f6; font-weight: bold;");
+    if (toastEditor) {
+      const markdown = toastEditor.getMarkdown();
+      const lines = markdown.split('\n');
+      const targetIdx = line - 1;
+      
+      console.log(`%c[EDITOR RECEIVER] Total lines: ${lines.length}. Target index: ${targetIdx}`, "color: #3b82f6;");
+      if (targetIdx >= 0 && targetIdx < lines.length) {
+        const originalLine = lines[targetIdx];
+        console.log(`%c[EDITOR RECEIVER] Original line text: "${originalLine}"`, "color: #3b82f6;");
+        
+        let patchedLine = originalLine;
+        let replaced = false;
+        
+        if (cleanOriginal) {
+          const cleanOriginalTrimmed = cleanOriginal.trim();
+          const newTextTrimmed = newText.trim();
+          
+          // 1단계: 가장 이상적인 부분 매칭 치환 시도 (HTML 내부 태그 손상 0% 보장)
+          if (originalLine.includes(cleanOriginal)) {
+            patchedLine = originalLine.replace(cleanOriginal, newText);
+            replaced = true;
+          } else if (originalLine.includes(cleanOriginalTrimmed)) {
+            patchedLine = originalLine.replace(cleanOriginalTrimmed, newTextTrimmed);
+            replaced = true;
+          } else {
+            // 대시 문자(– vs -) 인코딩 호환성 매칭 보정
+            const altOriginal1 = cleanOriginalTrimmed.replace(/-/g, '–');
+            const altOriginal2 = cleanOriginalTrimmed.replace(/–/g, '-');
+            if (originalLine.includes(altOriginal1)) {
+              patchedLine = originalLine.replace(altOriginal1, newTextTrimmed);
+              replaced = true;
+            } else if (originalLine.includes(altOriginal2)) {
+              patchedLine = originalLine.replace(altOriginal2, newTextTrimmed);
+              replaced = true;
+            }
+          }
+        }
+        
+        // 2단계: 부분 치환 매칭 실패 시 전체 구조 분해 조립 가동 (Fallback)
+        if (!replaced) {
+          console.log("%c[EDITOR RECEIVER] Exact replacement missed. Running fallback deconstruction engine.", "color: #eab308;");
+          const leadingMatch = originalLine.match(/^(\s*(?:#+|\*|-|\d+\.)?\s*(?:<[a-zA-Z0-9_-]+[^>]*>)*\s*)/);
+          const leading = leadingMatch ? leadingMatch[1] : '';
+          
+          const trailingMatch = originalLine.match(/((?:\s*<\/[a-zA-Z0-9_-]+>)*\s*)$/);
+          const trailing = trailingMatch ? trailingMatch[1] : '';
+          
+          const originalCore = originalLine.substring(leading.length, originalLine.length - trailing.length);
+          
+          let restoredText = newText;
+          if (originalCore.includes('<br />')) {
+            restoredText = restoredText.replace(/\n/g, '<br />');
+          } else if (originalCore.includes('<br>')) {
+            restoredText = restoredText.replace(/\n/g, '<br>');
+          }
+          
+          patchedLine = leading + restoredText + trailing;
+        }
+        
+        console.log(`%c[EDITOR RECEIVER] Patched line to: "${patchedLine}"`, "color: #10b981; font-weight: bold;");
+        lines[targetIdx] = patchedLine;
+        
+        // 스크롤과 포커스 손실 없이 본문 치환 반영 (튕김 및 반응 없음 문제 근본 해소)
+        setMarkdownPreservingScroll(lines.join('\n'));
+        
+        // 사용자 피드백을 실시간으로 시각화하는 아름다운 프리미엄 토스트 노티
+        showStudioToast(`라인 ${line} 수정 내용이 에디터에 완벽 반영되었습니다! ✨`, 'success');
+        
+        // 치환 완료 후 수 밀리초 대기하여 렌더 완료 시 해당 줄 다시 글로우 하이라이트 동기화
+        setTimeout(() => {
+          const frame = document.getElementById('preview-frame');
+          if (frame && frame.contentWindow) {
+            frame.contentWindow.postMessage({
+              type: 'HIGHLIGHT_LINE',
+              line: line
+            }, '*');
+          }
+        }, 150);
+      } else {
+        console.warn(`%c[EDITOR RECEIVER] targetIdx ${targetIdx} is out of bounds!`, "color: #dc2626;");
+        showStudioToast(`오류: 라인 ${line}이 문서 줄 수(${lines.length})를 초과했습니다.`, 'error');
+      }
+    }
+  }
+});
+
+// 에디터 마크다운 로딩 시 초기 스크롤 위치 및 커서 좌표를 항상 문서 맨 위(1라인)로 강제 정렬
+function resetScrollAndCursorToTop() {
+  if (toastEditor) {
+    toastEditor.setSelection([1, 1], [1, 1]);
+    toastEditor.focus();
+  }
+  const scrollContainer = document.querySelector('#toast-editor .toastui-editor-scroll-behavior') || document.querySelector('#toast-editor .cm-scroller');
+  if (scrollContainer) {
+    scrollContainer.scrollTop = 0;
+  }
+  const frame = document.getElementById('preview-frame');
+  if (frame && frame.contentWindow) {
+    frame.contentWindow.scrollTo({ top: 0, behavior: 'auto' });
+  }
+  console.log("%c[EDITOR] Reset scroll and cursor selection to Top [Line 1].", "color: #3b82f6; font-weight: bold;");
+}
+
+/* ─── 새 문서 작성(모달) ─── */
+window.openCreateModal = () => {
+  initEditor();
+  editTarget = { name: '', sha: null, text: '' };
+  
+  document.getElementById('modal-filename').textContent = '새 브로슈어 작성';
+  document.getElementById('edit-title').value = '';
+  document.getElementById('edit-pos').value = '';
+  document.getElementById('edit-id').value = '';
+  
+  const th = document.getElementById('edit-theme');
+  if(!th.options.length) th.innerHTML = THEMES.map(t => `<option value="${t.value}">${t.label}</option>`).join('');
+  th.value = 'blue';
+  
+  toastEditor.setMarkdown('');
+  document.getElementById('modal-edit').style.display = 'flex';
+  
+  // 약간의 지연 후 초기 동기화 및 스크롤 최상단 정렬
+  setTimeout(() => {
+    syncToPreview();
+    resetScrollAndCursorToTop();
+  }, 500);
+};
+
+/* ─── 메타데이터 및 본문 수정(모달) ─── */
+let editTarget = null;
+async function openEditModal(name, sha) {
+  initEditor();
+  
+  // Reset UI
+  isReadOnly = false;
+  toggleEditorReadOnly(false);
+
+  let docIdForLock = name.replace(/\.md$/, '');
+  
+  try {
+    // 1. Lock 확인
+    const lock = await checkLock(docIdForLock);
+    if (lock) {
+      const now = Math.floor(Date.now() / 1000);
+      if (now - lock.lastHeartbeat < STALE_THRESHOLD_MS / 1000) {
+        if (lock.editingBy !== getCurUser()) {
+          // 다른 사람이 편집 중 -> 모달 알림창 표시
+          showLockAlert(lock.editingBy, name, sha);
+          return; // 여기서 중단
+        } else {
+          // 본인이 편집 중 (브라우저 새로고침 등) -> 락 갱신
+          await acquireLock(docIdForLock, lock.sha);
+        }
+      } else {
+        // Stale Lock -> 자동 획득 시도
+        await acquireLock(docIdForLock, lock.sha);
+      }
+    } else {
+      // Lock 없음 -> 신규 획득
+      await acquireLock(docIdForLock);
+    }
+
+    await doOpenEditModal(name, sha);
+  } catch(e) {
+    alert(e.message);
+  }
+}
+
+/* 실제 모달을 열고 데이터를 채우는 핵심 로직 분리 */
+async function doOpenEditModal(name, sha) {
+  try {
+    const r = await ghFetch(`/repos/${ORG}/${REPO}/contents/docs/${name}?t=${Date.now()}`);
+    if (!r.ok) throw new Error('파일을 불러올 수 없습니다.');
+    const d = await r.json();
+    const text = decodeURIComponent(escape(atob(d.content)));
+    
+    let id='', title='', pos='', theme='blue';
+    const match = text.match(/^---\s*([\s\S]*?)---\s*/);
+    let stripped = text;
+    if (match) {
+      stripped = text.substring(match[0].length);
+      const fm = match[1];
+      const getVal = key => { const m = fm.match(new RegExp(`^${key}:\\s*(.*)$`, 'm')); return m ? m[1].replace(/^["']|["']$/g, '').trim() : ''; };
+      id = getVal('id'); title = getVal('title'); pos = getVal('sidebar_position'); theme = getVal('theme') || 'blue';
+    }
+
+    editTarget = { name, sha: d.sha, text: stripped };
+    document.getElementById('modal-filename').textContent = name + ' 수정';
+    document.getElementById('edit-title').value = title;
+    document.getElementById('edit-pos').value = pos;
+    document.getElementById('edit-id').value = id;
+    
+    const th = document.getElementById('edit-theme');
+    if(!th.options.length) th.innerHTML = THEMES.map(t => `<option value="${t.value}">${t.label}</option>`).join('');
+    th.value = theme;
+    
+    toastEditor.setMarkdown(editTarget.text);
+    document.getElementById('modal-edit').style.display = 'flex';
+    
+    // 초기 동기화 및 스크롤 최상단 정렬
+    setTimeout(() => {
+      syncToPreview();
+      resetScrollAndCursorToTop();
+    }, 500);
+  } catch(e) {
+    alert(e.message);
+  }
+}
+
+async function closeEditModal() { 
+  if (currentLock && !isReadOnly) {
+    await releaseLock(currentLock.docId, currentLock.sha);
+  }
+  stopHeartbeat();
+  document.getElementById('modal-edit').style.display = 'none'; 
+}
+
+/* ─── Lock Logic ─── */
+async function checkLock(docId) {
+  try {
+    const r = await ghFetch(`/repos/${ORG}/${REPO}/contents/${LOCK_DIR}/${docId}.lock.json`);
+    if (r.status === 404) return null;
+    const d = await r.json();
+    const content = JSON.parse(decodeURIComponent(escape(atob(d.content))));
+    return { ...content, sha: d.sha };
+  } catch (e) {
+    return null;
+  }
+}
+
+async function acquireLock(docId, existingSha = null) {
+  const now = Math.floor(Date.now() / 1000);
+  const lockData = {
+    docId,
+    editingBy: getCurUser(),
+    startedAt: now,
+    lastHeartbeat: now
+  };
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(lockData, null, 2))));
+  
+  const r = await ghFetch(`/repos/${ORG}/${REPO}/contents/${LOCK_DIR}/${docId}.lock.json`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      message: `system: acquire lock for ${docId} by @${getCurUser()} [skip ci]`,
+      content,
+      sha: existingSha,
+      branch: BRANCH
+    })
+  });
+
+  if (r.ok) {
+    const d = await r.json();
+    currentLock = { docId, sha: d.content.sha };
+    startHeartbeat();
+    return true;
+  }
+  return false;
+}
+
+async function releaseLock(docId, sha) {
+  if (!sha) return;
+  await ghFetch(`/repos/${ORG}/${REPO}/contents/${LOCK_DIR}/${docId}.lock.json`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      message: `system: release lock for ${docId} [skip ci]`,
+      sha,
+      branch: BRANCH
+    })
+  });
+  currentLock = null;
+}
+
+function startHeartbeat() {
+  stopHeartbeat();
+  heartbeatTimer = setInterval(async () => {
+    if (!currentLock) return;
+    const now = Math.floor(Date.now() / 1000);
+    const lockData = {
+      docId: currentLock.docId,
+      editingBy: getCurUser(),
+      lastHeartbeat: now
+    };
+    
+    // 1. 최신 락 상태 및 SHA 재조회 (Race Condition 방지)
+    const latest = await checkLock(currentLock.docId);
+    if (!latest || latest.editingBy !== getCurUser()) {
+      stopHeartbeat();
+      alert('락을 잃어버렸습니다. 다른 사용자가 편집을 시작했을 수 있습니다.');
+      isReadOnly = true;
+      toggleEditorReadOnly(true);
+      return;
+    }
+
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify({
+      ...lockData,
+      startedAt: latest.startedAt // 최초 생성 시점 보존
+    }, null, 2))));
+
+    const r = await ghFetch(`/repos/${ORG}/${REPO}/contents/${LOCK_DIR}/${currentLock.docId}.lock.json`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: `system: heartbeat for ${currentLock.docId} [skip ci]`,
+        content,
+        sha: latest.sha,
+        branch: BRANCH
+      })
+    });
+    if (r.ok) {
+      const d = await r.json();
+      currentLock.sha = d.content.sha;
+    }
+  }, HEARTBEAT_INTERVAL_MS);
+}
+
+function stopHeartbeat() {
+  if (heartbeatTimer) clearInterval(heartbeatTimer);
+  heartbeatTimer = null;
+}
+
+function showLockAlert(username, name, sha) {
+  const modal = document.getElementById('modal-lock-alert');
+  document.getElementById('lock-alert-user').textContent = '@' + username;
+  
+  // 버튼 이벤트 바인딩 (한 번만 실행되도록 처리)
+  const btnReadonly = document.getElementById('btn-lock-readonly');
+  const btnForce = document.getElementById('btn-lock-force');
+  
+  const handleReadonly = async () => {
+    closeLockAlert();
+    isReadOnly = true;
+    toggleEditorReadOnly(true);
+    await doOpenEditModal(name, sha);
+  };
+  
+  const handleForce = async () => {
+    if (!confirm('정말로 편집 권한을 강제로 가져오시겠습니까?')) return;
+    closeLockAlert();
+    
+    const docId = name.replace(/\.md$/, '');
+    const lock = await checkLock(docId);
+    const success = await acquireLock(docId, lock ? lock.sha : null);
+    
+    if (success) {
+      isReadOnly = false;
+      toggleEditorReadOnly(false);
+      await doOpenEditModal(name, sha);
+    } else {
+      alert('이미 다른 사용자가 락 상태를 변경했습니다. 새로고침 후 다시 시도해주세요.');
+    }
+  };
+
+  btnReadonly.onclick = handleReadonly;
+  btnForce.onclick = handleForce;
+  
+  modal.style.display = 'flex';
+}
+
+function closeLockAlert() {
+  document.getElementById('modal-lock-alert').style.display = 'none';
+}
+
+function toggleEditorReadOnly(readOnly) {
+  isReadOnly = readOnly;
+  document.getElementById('btn-save-edit').disabled = readOnly;
+  document.getElementById('edit-title').disabled = readOnly;
+  document.getElementById('edit-pos').disabled = readOnly;
+  document.getElementById('edit-id').disabled = readOnly;
+  document.getElementById('edit-theme').disabled = readOnly;
+  // Toast Editor readOnly is tricky, we can use CSS to disable pointer events or its API
+  const editorEl = document.querySelector('#toast-editor');
+  if (readOnly) {
+    editorEl.style.pointerEvents = 'none';
+    editorEl.style.opacity = '0.7';
+  } else {
+    editorEl.style.pointerEvents = 'auto';
+    editorEl.style.opacity = '1';
+  }
+}
+
+window.saveEdit = async () => {
+  if (!editTarget) return;
+  const btn = document.getElementById('btn-save-edit');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> 저장 중...';
+  
+  const id = document.getElementById('edit-id').value.trim();
+  const title = document.getElementById('edit-title').value.trim();
+  const pos = document.getElementById('edit-pos').value.trim();
+  const theme = document.getElementById('edit-theme').value;
+  
+  const frontmatter = [
+    '---',
+    id ? `id: ${id}` : null,
+    title ? `title: ${title}` : null,
+    pos ? `sidebar_position: ${pos}` : null,
+    theme ? `theme: ${theme}` : null,
+    '---',
+    ''
+  ].filter(l => l !== null).join('\n');
+  
+  const finalText = frontmatter + toastEditor.getMarkdown();
+  const content = btoa(unescape(encodeURIComponent(finalText)));
+  
+  let targetName = editTarget.name;
+  if (!targetName) {
+    if (!id) { alert('ID를 입력해주세요 (예: intro). 파일 생성에 필요합니다.'); btn.disabled=false; btn.innerHTML='저장 및 배포'; return; }
+    const prefix = pos ? String(pos).padStart(2,'0') + '-' : '';
+    targetName = prefix + id + '.md';
+    
+    // 신규 파일인 경우 저장 직전 락 확인
+    const docId = targetName.replace(/\.md$/, '');
+    const lock = await checkLock(docId);
+    if (lock && lock.editingBy !== getCurUser()) {
+      const now = Math.floor(Date.now() / 1000);
+      if (now - lock.lastHeartbeat < STALE_THRESHOLD_MS / 1000) {
+        alert(`현재 @${lock.editingBy} 님이 동일한 ID로 작업 중입니다. 다른 ID를 사용해주세요.`);
+        btn.disabled = false; btn.innerHTML = '저장 및 배포';
+        return;
+      }
+    }
+  }
+  
+  try {
+    const isNew = !editTarget.sha;
+    const msg = isNew 
+      ? `feat(docs): create ${targetName} by @${getCurUser()}`
+      : `docs(edit): update ${targetName} by @${getCurUser()}`;
+
+    const r = await ghFetch(`/repos/${ORG}/${REPO}/contents/docs/${targetName}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: msg, content, sha: editTarget.sha, branch: BRANCH }),
+    });
+    if (!r.ok) { const d = await r.json(); throw new Error(d.message); }
+    closeEditModal();
+    appendLog(`✓ ${editTarget.name} 속성 수정 완료`, 'ok');
+    appendLog('🚀 GitHub Actions 배포 시작됨…', 'ok');
+    setTimeout(loadDocs, 1500);
+  } catch(e) {
+    alert('수정 실패: ' + e.message);
+  } finally {
+    btn.disabled = false; btn.innerHTML = '저장 및 배포';
+  }
+};
+
+/* ─── 드롭존 ─── */
+const dropzone  = document.getElementById('dropzone');
+const fileInput = document.getElementById('file-input');
+
+dropzone.addEventListener('click', () => fileInput.click());
+dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
+dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+dropzone.addEventListener('drop', e => {
+  e.preventDefault(); dropzone.classList.remove('dragover');
+  addFiles([...e.dataTransfer.files]);
+});
+fileInput.addEventListener('change', () => addFiles([...fileInput.files]));
+
+/* ─── 파일명에서 메타 자동 추출 ─── */
+function metaFromFilename(filename) {
+  // 예) 01-intro.md → id: intro, sidebar_position: 1
+  const base = filename.replace(/\.md$/, '');
+  const match = base.match(/^(\d+)[\-_](.+)$/);
+  if (match) {
+    return {
+      id: match[2].toLowerCase().replace(/[^a-z0-9가-힣\-_]/g, '-'),
+      sidebar_position: parseInt(match[1], 10),
+    };
+  }
+  return {
+    id: base.toLowerCase().replace(/[^a-z0-9가-힣\-_]/g, '-'),
+    sidebar_position: '',
+  };
+}
+
+function addFiles(newFiles) {
+  const mds = newFiles.filter(f => f.name.endsWith('.md'));
+  if (mds.length !== newFiles.length) alert('.md 파일만 업로드할 수 있습니다.');
+  mds.forEach(f => {
+    if (!selectedFiles.find(x => x.file.name === f.name)) {
+      const auto = metaFromFilename(f.name);
+      selectedFiles.push({
+        file: f,
+        id: auto.id,
+        title: '',
+        sidebar_position: auto.sidebar_position,
+        theme: 'blue',
+        description: '',
+      });
+    }
+  });
+  renderFileList();
+}
+
+const THEMES = [
+  { value:'blue',   label:'파랑', color:'#2563eb' },
+  { value:'green',  label:'초록', color:'#16a34a' },
+  { value:'purple', label:'보라', color:'#7c3aed' },
+  { value:'orange', label:'주황', color:'#ea580c' },
+  { value:'gray',   label:'회색', color:'#6b7280' },
+];
+
+function renderFileList() {
+  const el = document.getElementById('file-list');
+  const uploadBtn = document.getElementById('btn-upload');
+  const clearBtn  = document.getElementById('btn-clear');
+
+  if (!selectedFiles.length) {
+    el.innerHTML = '';
+    dropzone.classList.remove('has-files');
+    uploadBtn.disabled = true;
+    clearBtn.classList.add('hidden');
+    return;
+  }
+  dropzone.classList.add('has-files');
+  uploadBtn.disabled = false;
+  clearBtn.classList.remove('hidden');
+
+  el.innerHTML = selectedFiles.map((item, i) => `
+    <div class="file-card" id="card-${i}">
+      <div class="file-card-header">
+        <span class="file-card-icon">📄</span>
+        <span class="file-card-name">${item.file.name}</span>
+        <span class="file-card-size">${formatBytes(item.file.size)}</span>
+        <button class="file-card-remove" onclick="removeFile(${i})">✕</button>
+      </div>
+      <div class="file-card-body">
+        <div class="field">
+          <label>제목 <span style="color:var(--red)">*</span></label>
+          <input type="text" placeholder="예) 인사말" value="${esc(item.title)}"
+            oninput="updateMeta(${i},'title',this.value)">
+        </div>
+        <div class="field">
+          <label>순서</label>
+          <input type="number" min="1" placeholder="1" value="${item.sidebar_position}"
+            oninput="updateMeta(${i},'sidebar_position',+this.value)">
+        </div>
+        <div class="field">
+          <label>ID <span style="color:var(--gray-400);font-weight:400;text-transform:none">(영문)</span></label>
+          <input type="text" placeholder="intro" value="${esc(item.id)}"
+            oninput="updateMeta(${i},'id',this.value)">
+        </div>
+        <div class="field">
+          <label>색상 테마</label>
+          <select onchange="updateMeta(${i},'theme',this.value)">
+            ${THEMES.map(t => `<option value="${t.value}" ${item.theme===t.value?'selected':''}>${t.label}</option>`).join('')}
+          </select>
+        </div>
+        <div class="field field-full">
+          <label>설명 <span style="color:var(--gray-400);font-weight:400;text-transform:none">(선택)</span></label>
+          <textarea placeholder="홈 화면 카드에 표시될 짧은 설명" oninput="updateMeta(${i},'description',this.value)">${esc(item.description)}</textarea>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function esc(s) { return String(s).replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+
+window.updateMeta = (idx, key, val) => {
+  selectedFiles[idx][key] = val;
+  // 제목이 입력되면 카드 테두리 색 변경
+  const card = document.getElementById(`card-${idx}`);
+  if (card) card.classList.toggle('ready', !!selectedFiles[idx].title);
+};
+
+window.removeFile = idx => { selectedFiles.splice(idx, 1); renderFileList(); };
+
+document.getElementById('btn-clear').addEventListener('click', () => {
+  selectedFiles = []; fileInput.value = ''; renderFileList();
+});
+
+/* ─── 업로드 ─── */
+document.getElementById('btn-upload').addEventListener('click', async () => {
+  if (!selectedFiles.length) return;
+  const btn = document.getElementById('btn-upload');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> 업로드 중…';
+
+  const pw = document.getElementById('progress-wrap');
+  const pf = document.getElementById('progress-fill');
+  const pl = document.getElementById('progress-label');
+  pw.style.display = 'block';
+  document.getElementById('log').innerHTML = '';
+
+  const total = selectedFiles.length;
+  let done = 0;
+
+  /* 제목 미입력 검사 */
+  const noTitle = selectedFiles.filter(item => !item.title.trim());
+  if (noTitle.length) {
+    alert(`제목이 비어있는 파일이 있습니다:\n${noTitle.map(x=>x.file.name).join('\n')}`);
+    btn.disabled = false;
+    btn.innerHTML = '⬆ 업로드 &amp; 배포';
+    return;
+  }
+
+  for (const item of selectedFiles) {
+    const { file, id, title, sidebar_position, theme, description } = item;
+    appendLog(`⬆ ${file.name} 업로드 중…`);
+    try {
+      /* 원본 텍스트 읽기 */
+      const originalText = await file.text();
+
+      /* 기존 frontmatter 제거 (이미 있는 경우) */
+      const stripped = originalText.replace(/^---[\s\S]*?---\s*/, '');
+
+      /* 새 frontmatter 생성 */
+      const frontmatter = [
+        '---',
+        `id: ${id || file.name.replace(/\.md$/,'').replace(/^\d+[\-_]/,'')}`,
+        `title: ${title}`,
+        sidebar_position ? `sidebar_position: ${sidebar_position}` : null,
+        `theme: ${theme}`,
+        description.trim() ? `description: "${description.trim().replace(/"/g,"'")}"` : null,
+        '---',
+        '',
+      ].filter(l => l !== null).join('\n');
+
+      /* 최종 내용 = frontmatter + 본문 */
+      const finalText = frontmatter + stripped;
+      const content = btoa(unescape(encodeURIComponent(finalText)));
+
+      /* 기존 파일 sha (덮어쓰기 시 필요) */
+      let sha;
+      const check = await ghFetch(`/repos/${ORG}/${REPO}/contents/docs/${file.name}`);
+      if (check.ok) { const d = await check.json(); sha = d.sha; }
+
+      const body = { 
+        message: `${sha ? 'docs(edit): update' : 'feat(docs): create'} ${file.name} by @${getCurUser()}`, 
+        content, 
+        branch: BRANCH 
+      };
+      if (sha) body.sha = sha;
+
+      const r = await ghFetch(`/repos/${ORG}/${REPO}/contents/docs/${file.name}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      if (!r.ok) { const d = await r.json(); throw new Error(d.message); }
+      appendLog(`✓ ${file.name} ("${title}") 완료`, 'ok');
+    } catch(e) {
+      appendLog(`✗ ${file.name} 실패: ${e.message}`, 'err');
+    }
+    done++;
+    pf.style.width = (done / total * 100) + '%';
+    pl.textContent  = `${done} / ${total}`;
+  }
+
+  appendLog('');
+  appendLog('🚀 GitHub Actions 자동 배포 시작됨!', 'ok');
+  appendLog('   약 1~2분 후 사이트에 반영됩니다.', 'info');
+
+  selectedFiles = []; fileInput.value = ''; renderFileList();
+  btn.disabled = false;
+  btn.innerHTML = '⬆ 업로드 &amp; 배포';
+  setTimeout(loadDocs, 2000);
+});
+
+/* ─── util ─── */
+function appendLog(msg, type = 'info') {
+  const el = document.getElementById('log');
+  el.style.display = 'block';
+  const cls = type === 'ok' ? 'log-ok' : type === 'err' ? 'log-err' : 'log-info';
+  el.innerHTML += `<span class="${cls}">${msg}</span>\n`;
+  el.scrollTop = el.scrollHeight;
+}
+
+function formatBytes(b) { return b < 1024 ? b + 'B' : (b / 1024).toFixed(1) + 'KB'; }
+
+function toBase64(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = e => res(e.target.result.split(',')[1]);
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+
+/* ─── Graceful Unload ─── */
+window.addEventListener('beforeunload', (e) => {
+  if (currentLock && !isReadOnly) {
+    // best-effort cleanup: beforeunload network requests are not guaranteed by browsers.
+    // Heartbeat + stale timeout remains the primary recovery mechanism.
+    releaseLock(currentLock.docId, currentLock.sha);
+  }
+});
+</script>
+</body>
+</html>

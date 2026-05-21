@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563FF"/>
+      <stop offset="100%" stop-color="#00D1FF"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7CFF6B"/>
+      <stop offset="100%" stop-color="#00D1FF"/>
+    </linearGradient>
+    <linearGradient id="g3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFC857"/>
+      <stop offset="100%" stop-color="#FF7B61"/>
+    </linearGradient>
+    <linearGradient id="g4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7B61FF"/>
+      <stop offset="100%" stop-color="#2563FF"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="24" height="24" rx="7" fill="url(#g1)"/>
+  <rect x="36" y="4" width="24" height="24" rx="7" fill="url(#g2)"/>
+  <rect x="4" y="36" width="24" height="24" rx="7" fill="url(#g3)"/>
+  <rect x="36" y="36" width="24" height="24" rx="7" fill="url(#g4)"/>
+  <circle cx="32" cy="32" r="4" fill="white" opacity="0.9"/>
+</svg>

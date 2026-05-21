@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e3a8a"/>
+    </linearGradient>
+    <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563FF"/>
+      <stop offset="100%" stop-color="#00D1FF"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7CFF6B"/>
+      <stop offset="100%" stop-color="#00D1FF"/>
+    </linearGradient>
+    <linearGradient id="g3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFC857"/>
+      <stop offset="100%" stop-color="#FF7B61"/>
+    </linearGradient>
+    <linearGradient id="g4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7B61FF"/>
+      <stop offset="100%" stop-color="#2563FF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 배경 -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- 오른쪽 로고 블록 -->
+  <rect x="820" y="165" width="130" height="130" rx="36" fill="url(#g1)" opacity="0.9"/>
+  <rect x="970" y="165" width="130" height="130" rx="36" fill="url(#g2)" opacity="0.9"/>
+  <rect x="820" y="315" width="130" height="130" rx="36" fill="url(#g3)" opacity="0.9"/>
+  <rect x="970" y="315" width="130" height="130" rx="36" fill="url(#g4)" opacity="0.9"/>
+  <circle cx="985" cy="330" r="18" fill="white" opacity="0.85"/>
+
+  <!-- 텍스트 -->
+  <text x="80" y="240" font-family="'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="64" font-weight="800" fill="white">부산대학교</text>
+  <text x="80" y="330" font-family="'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="64" font-weight="800" fill="white">SW중심대학 2026</text>
+  <text x="80" y="420" font-family="'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif" font-size="32" font-weight="400" fill="#93c5fd">AI융합교육원 온라인 브로슈어</text>
+
+  <!-- 하단 accent line -->
+  <rect x="80" y="480" width="200" height="6" rx="3" fill="url(#g1)"/>
+</svg>

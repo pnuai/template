@@ -1,0 +1,54 @@
+{
+  "name": "pnu-modu",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "docusaurus": "docusaurus",
+    "generate:chapters": "node scripts/generateChapters.mjs",
+    "start": "npm run generate:chapters && docusaurus start",
+    "build": "npm run generate:chapters && docusaurus build",
+    "swizzle": "docusaurus swizzle",
+    "deploy": "docusaurus deploy",
+    "clear": "docusaurus clear",
+    "serve": "docusaurus serve",
+    "write-translations": "docusaurus write-translations",
+    "write-heading-ids": "docusaurus write-heading-ids"
+  },
+  "dependencies": {
+    "@docusaurus/core": "3.10.1",
+    "@docusaurus/faster": "3.10.1",
+    "@docusaurus/preset-classic": "3.10.1",
+    "@mdx-js/react": "^3.0.0",
+    "clsx": "^2.0.0",
+    "glob": "^13.0.6",
+    "gray-matter": "^4.0.3",
+    "js-yaml": "^4.1.1",
+    "prism-react-renderer": "^2.3.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-markdown": "^10.1.0",
+    "rehype-raw": "^7.0.0",
+    "remark-directive": "^4.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-mdx": "^3.1.1"
+  },
+  "devDependencies": {
+    "@docusaurus/module-type-aliases": "3.10.1",
+    "@docusaurus/types": "3.10.1"
+  },
+  "browserslist": {
+    "production": [
+      ">0.5%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 3 chrome version",
+      "last 3 firefox version",
+      "last 5 safari version"
+    ]
+  },
+  "engines": {
+    "node": ">=20.0"
+  }
+}

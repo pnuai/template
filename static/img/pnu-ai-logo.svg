@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563FF"/>
+      <stop offset="100%" stop-color="#00D1FF"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7CFF6B"/>
+      <stop offset="100%" stop-color="#00D1FF"/>
+    </linearGradient>
+    <linearGradient id="g3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFC857"/>
+      <stop offset="100%" stop-color="#FF7B61"/>
+    </linearGradient>
+    <linearGradient id="g4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7B61FF"/>
+      <stop offset="100%" stop-color="#2563FF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 왼쪽 위: 파란 블록 -->
+  <rect x="20" y="20" width="72" height="72" rx="20" fill="url(#g1)"/>
+  <!-- 오른쪽 위: 초록 블록 -->
+  <rect x="108" y="20" width="72" height="72" rx="20" fill="url(#g2)"/>
+  <!-- 왼쪽 아래: 주황 블록 -->
+  <rect x="20" y="108" width="72" height="72" rx="20" fill="url(#g3)"/>
+  <!-- 오른쪽 아래: 보라 블록 -->
+  <rect x="108" y="108" width="72" height="72" rx="20" fill="url(#g4)"/>
+
+  <!-- 중앙 흰 점 (모듈 연결 느낌) -->
+  <circle cx="100" cy="100" r="10" fill="white" opacity="0.9"/>
+</svg>

@@ -1,0 +1,82 @@
+.main {
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.mainInner {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+@media (max-width: 1480px) {
+  .mainInner { padding: 0 28px; }
+}
+
+@media (max-width: 1024px) {
+  .mainInner { padding: 0 16px; }
+}
+
+@media (max-width: 768px) {
+  .mainInner { padding: 0 8px; }
+}
+
+/* 챕터 이전/다음 네비 */
+.chapterNav {
+  margin-top: 80px;
+  border-top: 1px solid #d8e4f4;
+  padding-top: 0;
+}
+
+.chapterNavInner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+.navPrev,
+.navNext {
+  display: flex;
+  flex-direction: column;
+  padding: 32px 40px;
+  text-decoration: none !important;
+  transition: background 0.18s;
+  gap: 6px;
+}
+
+.navPrev {
+  border-right: 1px solid #d8e4f4;
+  align-items: flex-start;
+}
+
+.navNext {
+  align-items: flex-end;
+}
+
+.navPrev:hover,
+.navNext:hover {
+  background: #f0f5ff;
+}
+
+.navDir {
+  font-size: 12px;
+  font-weight: 600;
+  color: #e63312;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.navNum {
+  font-size: 42px;
+  font-weight: 900;
+  color: #0b1f4e;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.navTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1757c2;
+}
